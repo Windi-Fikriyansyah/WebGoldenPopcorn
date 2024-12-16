@@ -262,7 +262,7 @@ app.get('/auth/google/callback',
 
     // Buat JWT token dengan payload yang berisi id_user dan role
     const token = jwt.sign({ id: id_user, role: role }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.redirect(`http://localhost:3000/home?token=${token}`);
+    res.redirect(`https://web-golden-popcorn-six.vercel.app/home?token=${token}`);
   }
 );
 
@@ -311,7 +311,7 @@ app.post('/api/forgot-password', async (req, res) => {
       [resetPasswordToken, resetPasswordExpires, email]);
 
     // Send email with reset link
-    const resetURL = `http://localhost:3000/reset-password?token=${resetToken}&email=${email}`;
+    const resetURL = `https://web-golden-popcorn-six.vercel.app/reset-password?token=${resetToken}&email=${email}`;
     const message = `You are receiving this email because you (or someone else) has requested the reset of a password.
                      Please click on the following link, or paste this into your browser to complete the process: ${resetURL}`;
 
@@ -344,7 +344,7 @@ app.post('/api/forgot-password', async (req, res) => {
 
 app.get('/api/reset-password', (req, res) => {
   // Render or send the reset password page to the user
-  res.redirect(`http://localhost:3000/reset-password`);
+  res.redirect(`https://web-golden-popcorn-six.vercel.app/reset-password`);
 });
 
 app.post('/api/reset-password', async (req, res) => {
