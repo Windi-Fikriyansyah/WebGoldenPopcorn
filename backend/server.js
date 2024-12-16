@@ -55,7 +55,7 @@ const sendVerificationEmail = (user, token) => {
     from:{
       name: 'Golden Popcorn',
       address: process.env.EMAIL_USER,
-    }, 
+    },
     to: user.email,
     subject: 'Email Verification',
     text: `Please verify your email by clicking on the link: ${process.env.CLIENT_URL}/verify-email?token=${token}`,
@@ -95,7 +95,7 @@ app.post('/api/register', [
     }
 
     // Hash password
-    console.log('Salt Rounds:', 10); 
+    console.log('Salt Rounds:', 10);
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -104,7 +104,7 @@ app.post('/api/register', [
 
     // Simpan user ke database
     const newUser = await pool.query(
-      `INSERT INTO users (username, email, password, email_verification_token) 
+      `INSERT INTO users (username, email, password, email_verification_token)
       VALUES ($1, $2, $3, $4) RETURNING *`,
       [username, email, hashedPassword, emailVerificationToken]
     );
@@ -176,8 +176,8 @@ app.post('/api/login', async (req, res) => {
 
     // Buat JWT token jika login berhasil
     const token = jwt.sign(
-      { id: user.id_user, username: user.username, role: user.role }, 
-      process.env.JWT_SECRET, 
+      { id: user.id_user, username: user.username, role: user.role },
+      process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
 
@@ -191,7 +191,7 @@ app.post('/api/login', async (req, res) => {
 
 // Login Google ----------------------------------------------------------------------------------------------------------------------------------------------------- //
 app.use(session({
-  secret: 'my_super_secret_key', 
+  secret: 'my_super_secret_key',
   resave: false,
   saveUninitialized: true,
   cookie: { secure: false }
@@ -302,12 +302,12 @@ app.post('/api/forgot-password', async (req, res) => {
     const resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hour from now
 
     // Save token to database
-    await pool.query('UPDATE users SET reset_password_token = $1, reset_password_expires = $2 WHERE email = $3', 
+    await pool.query('UPDATE users SET reset_password_token = $1, reset_password_expires = $2 WHERE email = $3',
       [resetPasswordToken, resetPasswordExpires, email]);
 
     // Send email with reset link
     const resetURL = `http://localhost:3000/reset-password?token=${resetToken}&email=${email}`;
-    const message = `You are receiving this email because you (or someone else) has requested the reset of a password. 
+    const message = `You are receiving this email because you (or someone else) has requested the reset of a password.
                      Please click on the following link, or paste this into your browser to complete the process: ${resetURL}`;
 
     const transporter = nodemailer.createTransport({
@@ -315,7 +315,7 @@ app.post('/api/forgot-password', async (req, res) => {
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS,
-        
+
       },
     });
 
@@ -324,7 +324,7 @@ app.post('/api/forgot-password', async (req, res) => {
       from:{
         name: 'Golden Popcorn',
         address: process.env.EMAIL_USER,
-      }, 
+      },
       to: email,
       subject: 'Password Reset',
       text: message,
@@ -365,7 +365,7 @@ app.post('/api/reset-password', async (req, res) => {
     // Hash new password and save it
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    await pool.query('UPDATE users SET password = $1, reset_password_token = NULL, reset_password_expires = NULL WHERE email = $2', 
+    await pool.query('UPDATE users SET password = $1, reset_password_token = NULL, reset_password_expires = NULL WHERE email = $2',
       [hashedPassword, email]);
 
     res.json({ success: true, message: 'Password reset successful' });
@@ -454,7 +454,7 @@ function authenticateToken(req, res, next) {
     if (err) {
       return res.status(403).json({ message: 'Token is invalid' });
     }  // Jika token tidak valid, kirim Forbidden
-    
+
     req.user = user;  // Simpan informasi user di request object
     next();  // Lanjutkan ke middleware berikutnya atau ke route handler
   });
@@ -507,7 +507,7 @@ app.get('/api/watchlist', authenticateToken, async (req, res) => {
   }
 });
 
-app.post('/api/movie/add', authenticateToken, 
+app.post('/api/movie/add', authenticateToken,
   [
     // Validasi input menggunakan express-validator
     body('title').notEmpty().withMessage('Title is required'),
@@ -559,7 +559,7 @@ app.post('/api/movie/add', authenticateToken,
       const movieId = movieResult.rows[0].id_movie;
 
       await pool.query(`INSERT INTO movie_countries (id_movie, id_country) VALUES ($1, $2)`, [movieId, countryId]);
-      
+
       for (const genreId of genres) {
         await pool.query(`INSERT INTO movie_genres (id_movie, id_genre) VALUES ($1, $2)`, [movieId, genreId]);
       }
@@ -578,13 +578,13 @@ app.post('/api/movie/add', authenticateToken,
     }
   }
 );
-  
+
 
 app.get('/api/movies/title/:title', async (req, res) => {
   const { title } = req.params;
   try {
     const result = await pool.query(
-      `SELECT movies.id_movie, movies.synopsis, movies.alt_title, movies.title, movies.year, movies.rating, 
+      `SELECT movies.id_movie, movies.synopsis, movies.alt_title, movies.title, movies.year, movies.rating,
        array_agg(DISTINCT genres.name) as genres, movies.poster, movies.trailer, array_agg(DISTINCT countries.name) as countries
        FROM movies
        LEFT JOIN movie_genres ON movies.id_movie = movie_genres.id_movie
@@ -617,7 +617,7 @@ app.get('/api/movies/:id_movie/actors', async (req, res) => {
        JOIN movie_actors ON actors.id_actor = movie_actors.id_actor
        WHERE movie_actors.id_movie = $1`, [id_movie]
     );
-    
+
     res.json(result.rows);
   } catch (err) {
     console.error(err);
@@ -631,7 +631,7 @@ app.post('/api/comments', authenticateToken, async (req, res) => {
 
   try {
     // ID dan username pengguna dari token (dari middleware authenticateToken)
-    const id_user = req.user.id;  
+    const id_user = req.user.id;
     const username = req.user.username;
 
     // Simpan komentar di database dengan id_user yang sesuai
@@ -674,8 +674,8 @@ app.get('/api/movies/:id_movie/comments', async (req, res) => {
 app.get('/api/admins', async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id_user, username, email, role 
-       FROM users 
+      `SELECT id_user, username, email, role
+       FROM users
        WHERE role = 'admin'`
     );
     res.json(result.rows);
@@ -722,7 +722,7 @@ app.get('/api/movies/validate/:id_movie/actors', async (req, res) => {
        JOIN movie_actors ON actors.id_actor = movie_actors.id_actor
        WHERE movie_actors.id_movie = $1`, [id_movie]
     );
-    
+
     res.json(result.rows);
   } catch (err) {
     //console.error(err);
@@ -881,8 +881,8 @@ app.put('/api/actors/:id', async (req, res) => {
 app.get('/api/user', async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id_user, username, email, role, is_suspended 
-       FROM users 
+      `SELECT id_user, username, email, role, is_suspended
+       FROM users
        WHERE role = 'user'`
     );
     console.log("Fetched users:", result.rows); // Debugging
@@ -981,18 +981,18 @@ app.put('/api/user/unsuspend/:id', async (req, res) => {
 app.get('/api/comments', async (req, res) => {
   try {
     const result = await pool.query(`
-      SELECT 
+      SELECT
         comments.id_comment,
         users.username,
         movies.title AS movie,
         comments.rate,
         comments.comment,
         comments.status
-      FROM 
+      FROM
         comments
-      JOIN 
+      JOIN
         users ON comments.id_user = users.id_user
-      JOIN 
+      JOIN
         movies ON comments.id_movie = movies.id_movie;
     `);
 
@@ -1162,7 +1162,7 @@ app.delete('/api/countries/:id', async (req, res) => {
 // Search countries by name
 app.get('/api/countries/search', async (req, res) => {
   const { q } = req.query;
-  
+
   try {
     const result = await pool.query(
       'SELECT * FROM countries WHERE LOWER(name) LIKE LOWER($1)',
