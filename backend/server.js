@@ -209,7 +209,7 @@ app.use(passport.session());
 passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID, // Client ID dari Google
   clientSecret: process.env.GOOGLE_CLIENT_SECRET, // Client Secret dari Google
-  callbackURL: 'http://localhost:5000/auth/google/callback' // URL yang akan digunakan setelah login berhasil
+  callbackURL: 'https://web-golden-popcorn-six.vercel.app/auth/google/callback' // URL yang akan digunakan setelah login berhasil
 },
 async (token, tokenSecret, profile, done) => {
   try {
