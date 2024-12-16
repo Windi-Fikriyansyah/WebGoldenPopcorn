@@ -71,6 +71,11 @@ const sendVerificationEmail = (user, token) => {
 };
 
 // Register route
+app.get('/api/test', (req, res) => {
+    console.log('API request received');
+    res.json({ message: "API is working!" });
+  });
+
 app.post('/api/register', [
   check('username').isLength({ min: 5 }).withMessage('Username must be at least 3 characters long'),
   check('email').isEmail().withMessage('Please enter a valid email'),
