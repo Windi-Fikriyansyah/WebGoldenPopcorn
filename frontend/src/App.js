@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/user/Login';
 import RegisterPage from './pages/user/Register';
 import HomePage from './pages/user/Home';
@@ -31,7 +31,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        
+
         {/* Rute umum yang dapat diakses oleh semua pengguna (tidak punya role) */}
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -58,8 +58,8 @@ function App() {
         <Route path="/users" element={<ProtectedRoute roleRequired="admin"><UsersPage /></ProtectedRoute>} />
         <Route path="/actor" element={<ProtectedRoute roleRequired="admin"><ActorPage /></ProtectedRoute>} />
         <Route path="/comments" element={<ProtectedRoute roleRequired="admin"><CommentPage /></ProtectedRoute>} />
-        
-        
+
+
       </Routes>
     </Router>
   );
